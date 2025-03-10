@@ -13,13 +13,15 @@ const nextConfig = {
     ],
   },
   async headers() {
+    const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000'];
+    
     return [
       {
         source: '/widget',
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: '*', // In production, you should specify allowed domains
+            value: process.env.NODE_ENV === 'development' ? '*' : allowedOrigins.join(','),
           },
           {
             key: 'Access-Control-Allow-Methods',
@@ -29,6 +31,10 @@ const nextConfig = {
             key: 'Access-Control-Allow-Headers',
             value: 'Content-Type',
           },
+          {
+            key: 'Vary',
+            value: 'Origin',
+          },
         ],
       },
       {
@@ -36,11 +42,36 @@ const nextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: '*',
+            value: process.env.NODE_ENV === 'development' ? '*' : allowedOrigins.join(','),
           },
           {
             key: 'Content-Type',
             value: 'application/javascript',
+          },
+          {
+            key: 'Vary',
+            value: 'Origin',
+          },
+        ],
+      },
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: process.env.NODE_ENV === 'development' ? '*' : allowedOrigins.join(','),
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization',
+          },
+          {
+            key: 'Vary',
+            value: 'Origin',
           },
         ],
       },
