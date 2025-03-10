@@ -75,8 +75,8 @@
 
   // Handle messages from iframe
   window.addEventListener('message', function(event) {
-    if (event.data.type === 'treboundResize') {
-      // Handle iframe resize if needed
+    if (event.data.type === 'treboundClose') {
+      iframe.classList.remove('active');
     }
   });
 
