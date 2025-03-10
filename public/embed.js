@@ -18,7 +18,7 @@
       height: 90vh;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: all 0.3s ease;
       position: fixed;
       top: 50%;
       left: 50%;
@@ -27,6 +27,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 32px rgba(0, 0, 0, 0.2);
       background: white;
+      overflow: hidden; /* Prevent content overflow */
     }
     .trebound-widget-overlay {
       position: fixed;
@@ -39,6 +40,8 @@
       pointer-events: none;
       transition: opacity 0.3s ease;
       z-index: 999999;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
     }
     .trebound-widget-overlay.active {
       opacity: 1;
@@ -55,6 +58,8 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+      touch-action: manipulation; /* Optimize touch interactions */
     }
     .trebound-widget-button.default {
       background-color: var(--primary-color, #8B5C9E);
@@ -63,6 +68,9 @@
     }
     .trebound-widget-button.default:hover {
       background-color: var(--primary-color-dark, #7B4C8E);
+    }
+    .trebound-widget-button.default:active {
+      transform: scale(0.98); /* Add slight press effect */
     }
     .trebound-widget-button.outline {
       background-color: transparent;
@@ -83,9 +91,30 @@
     }
     @media (max-width: 840px) {
       .trebound-widget-frame {
-        width: 95%;
-        height: 95vh;
-        max-height: 95vh;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        top: 0;
+        left: 0;
+        transform: none;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        transform: translateY(100%);
+      }
+      .trebound-widget-frame.active {
+        transform: translateY(0);
+      }
+      .trebound-widget-button {
+        padding: 14px 24px; /* Slightly larger touch target on mobile */
+      }
+    }
+    /* Handle notched displays */
+    @supports (padding: env(safe-area-inset-bottom)) {
+      @media (max-width: 840px) {
+        .trebound-widget-frame {
+          padding-top: env(safe-area-inset-top);
+          padding-bottom: env(safe-area-inset-bottom);
+        }
       }
     }
   `;
@@ -106,6 +135,7 @@
       iframe = document.createElement('iframe');
       iframe.className = 'trebound-widget-frame';
       iframe.src = `${config.domain}/widget/booking`; // Direct to booking page
+      iframe.setAttribute('allow', 'payment'); // Allow payment APIs
       document.body.appendChild(iframe);
 
       // Close widget when clicking overlay
@@ -114,6 +144,13 @@
       // Handle messages from iframe
       window.addEventListener('message', function(event) {
         if (event.data.type === 'treboundClose') {
+          hideWidget();
+        }
+      });
+
+      // Handle escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
           hideWidget();
         }
       });
@@ -126,6 +163,7 @@
     const elements = createWidgetElements();
     elements.overlay.classList.add('active');
     elements.iframe.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
   }
 
   // Hide widget
@@ -133,6 +171,7 @@
     if (iframe && overlay) {
       overlay.classList.remove('active');
       iframe.classList.remove('active');
+      document.body.style.overflow = ''; // Restore scrolling
     }
   }
 
