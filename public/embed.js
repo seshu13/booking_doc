@@ -14,22 +14,39 @@
     .trebound-widget-frame {
       border: none;
       width: 100%;
-      height: 0;
+      max-width: 800px;
+      height: 90vh;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000000;
+      border-radius: 12px;
+      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.2);
+      background: white;
+    }
+    .trebound-widget-overlay {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: 999999;
       background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 999999;
+    }
+    .trebound-widget-overlay.active {
+      opacity: 1;
+      pointer-events: all;
     }
     .trebound-widget-frame.active {
       opacity: 1;
       pointer-events: all;
-      height: 100%;
     }
     .trebound-widget-button {
       padding: 12px 24px;
@@ -64,25 +81,35 @@
     .trebound-widget-button.minimal:hover {
       text-decoration: underline;
     }
+    @media (max-width: 840px) {
+      .trebound-widget-frame {
+        width: 95%;
+        height: 95vh;
+        max-height: 95vh;
+      }
+    }
   `;
   document.head.appendChild(style);
 
   let iframe = null;
+  let overlay = null;
 
-  // Create iframe when needed
-  function createIframe() {
+  // Create iframe and overlay when needed
+  function createWidgetElements() {
     if (!iframe) {
+      // Create overlay
+      overlay = document.createElement('div');
+      overlay.className = 'trebound-widget-overlay';
+      document.body.appendChild(overlay);
+
+      // Create iframe
       iframe = document.createElement('iframe');
       iframe.className = 'trebound-widget-frame';
-      iframe.src = `${config.domain}/widget?embedded=true`; // Add embedded parameter
+      iframe.src = `${config.domain}/widget/booking`; // Direct to booking page
       document.body.appendChild(iframe);
 
-      // Close widget when clicking outside
-      iframe.addEventListener('click', function(e) {
-        if (e.target === iframe) {
-          hideWidget();
-        }
-      });
+      // Close widget when clicking overlay
+      overlay.addEventListener('click', hideWidget);
 
       // Handle messages from iframe
       window.addEventListener('message', function(event) {
@@ -91,18 +118,20 @@
         }
       });
     }
-    return iframe;
+    return { iframe, overlay };
   }
 
   // Show widget
   function showWidget() {
-    const iframe = createIframe();
-    iframe.classList.add('active');
+    const elements = createWidgetElements();
+    elements.overlay.classList.add('active');
+    elements.iframe.classList.add('active');
   }
 
   // Hide widget
   function hideWidget() {
-    if (iframe) {
+    if (iframe && overlay) {
+      overlay.classList.remove('active');
       iframe.classList.remove('active');
     }
   }
