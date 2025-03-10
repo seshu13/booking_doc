@@ -84,11 +84,11 @@ const DoctorSelection = ({ selected, onSelect }: DoctorSelectionProps) => {
   }
 
   return (
-    <div className="space-y-4 md:space-y-8">
-      <h2 className="text-xl md:text-2xl font-semibold text-gray-900 px-1">
+    <div className="space-y-4">
+      <h2 className="text-lg md:text-xl font-semibold text-gray-900">
         Choose Your Doctor
       </h2>
-      <div className="space-y-4 md:space-y-6">
+      <div className="space-y-3">
         {doctors.map((doctor) => (
           <DoctorCard
             key={doctor.id}
@@ -101,12 +101,12 @@ const DoctorSelection = ({ selected, onSelect }: DoctorSelectionProps) => {
                 ? 'bg-gradient-to-br from-[#8B5C9E] to-[#6B4A7E] text-white shadow-lg'
                 : 'bg-white hover:bg-gray-50 border border-gray-200 hover:border-[#8B5C9E]/30'
               }
-              p-4 md:p-6 rounded-xl md:rounded-2xl
+              p-3 md:p-4 rounded-xl
             `}
           >
-            <div className="flex gap-4 md:gap-6">
+            <div className="flex gap-3 md:gap-4">
               {/* Doctor Image */}
-              <div className="relative w-20 h-28 md:w-24 md:h-32 flex-shrink-0">
+              <div className="relative w-16 h-24 md:w-20 md:h-28 flex-shrink-0">
                 <DoctorImage
                   src={doctor.image}
                   alt={doctor.name}
@@ -115,9 +115,9 @@ const DoctorSelection = ({ selected, onSelect }: DoctorSelectionProps) => {
 
               {/* Doctor Info */}
               <div className="flex-1 min-w-0">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 md:gap-0 mb-3">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-1 md:gap-0 mb-2">
                   <div>
-                    <h3 className="text-lg md:text-xl font-semibold mb-1 text-gray-900">
+                    <h3 className="text-base md:text-lg font-semibold mb-0.5 text-gray-900">
                       {doctor.name}
                     </h3>
                     <p className={`
@@ -129,13 +129,13 @@ const DoctorSelection = ({ selected, onSelect }: DoctorSelectionProps) => {
                   </div>
                   <div className="md:text-right">
                     <p className={`
-                      text-xl md:text-2xl font-bold
+                      text-lg md:text-xl font-bold
                       ${selected === doctor.id ? 'text-white' : 'text-gray-900'}
                     `}>
                       ₹{doctor.fee}
                     </p>
                     <p className={`
-                      text-xs font-medium mt-0.5 md:mt-1
+                      text-[10px] md:text-xs font-medium
                       ${selected === doctor.id ? 'text-white/90' : 'text-gray-700'}
                     `}>
                       Per Consultation
@@ -144,12 +144,12 @@ const DoctorSelection = ({ selected, onSelect }: DoctorSelectionProps) => {
                 </div>
 
                 {/* Qualifications */}
-                <div className="flex flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-4">
+                <div className="flex flex-wrap gap-1 md:gap-1.5 mb-2 md:mb-3">
                   {doctor.qualifications?.map((qual, index) => (
                     <span
                       key={index}
                       className={`
-                        text-xs font-semibold px-2 py-0.5 md:px-2.5 md:py-1 rounded-full
+                        text-[10px] md:text-xs font-semibold px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-full
                         ${selected === doctor.id
                           ? 'bg-white/20 text-white'
                           : 'bg-[#8B5C9E]/10 text-[#8B5C9E]'}
@@ -161,70 +161,70 @@ const DoctorSelection = ({ selected, onSelect }: DoctorSelectionProps) => {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-                  <div className="flex items-center gap-2">
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+                  <div className="flex items-center gap-1.5">
                     <div className={`
-                      p-1.5 md:p-2 rounded-lg
+                      p-1 md:p-1.5 rounded-lg
                       ${selected === doctor.id ? 'bg-white/20' : 'bg-[#8B5C9E]/10'}
                     `}>
-                      <Star className={`w-3.5 h-3.5 md:w-4 md:h-4 ${selected === doctor.id ? 'text-white' : 'text-[#8B5C9E]'}`} />
+                      <Star className={`w-3 h-3 md:w-3.5 md:h-3.5 ${selected === doctor.id ? 'text-white' : 'text-[#8B5C9E]'}`} />
                     </div>
                     <div>
-                      <p className={`text-sm font-semibold ${selected === doctor.id ? 'text-white' : 'text-gray-900'}`}>
+                      <p className={`text-xs md:text-sm font-semibold ${selected === doctor.id ? 'text-white' : 'text-gray-900'}`}>
                         {doctor.rating}
                       </p>
-                      <p className={`text-[10px] md:text-xs font-medium ${selected === doctor.id ? 'text-white/90' : 'text-gray-700'}`}>
+                      <p className={`text-[10px] font-medium ${selected === doctor.id ? 'text-white/90' : 'text-gray-700'}`}>
                         Rating
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <div className={`
-                      p-1.5 md:p-2 rounded-lg
+                      p-1 md:p-1.5 rounded-lg
                       ${selected === doctor.id ? 'bg-white/20' : 'bg-[#8B5C9E]/10'}
                     `}>
-                      <Award className={`w-3.5 h-3.5 md:w-4 md:h-4 ${selected === doctor.id ? 'text-white' : 'text-[#8B5C9E]'}`} />
+                      <Award className={`w-3 h-3 md:w-3.5 md:h-3.5 ${selected === doctor.id ? 'text-white' : 'text-[#8B5C9E]'}`} />
                     </div>
                     <div>
-                      <p className={`text-sm font-semibold ${selected === doctor.id ? 'text-white' : 'text-gray-900'}`}>
+                      <p className={`text-xs md:text-sm font-semibold ${selected === doctor.id ? 'text-white' : 'text-gray-900'}`}>
                         {doctor.experience}
                       </p>
-                      <p className={`text-[10px] md:text-xs font-medium ${selected === doctor.id ? 'text-white/90' : 'text-gray-700'}`}>
+                      <p className={`text-[10px] font-medium ${selected === doctor.id ? 'text-white/90' : 'text-gray-700'}`}>
                         Experience
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <div className={`
-                      p-1.5 md:p-2 rounded-lg
+                      p-1 md:p-1.5 rounded-lg
                       ${selected === doctor.id ? 'bg-white/20' : 'bg-[#8B5C9E]/10'}
                     `}>
-                      <Clock className={`w-3.5 h-3.5 md:w-4 md:h-4 ${selected === doctor.id ? 'text-white' : 'text-[#8B5C9E]'}`} />
+                      <Clock className={`w-3 h-3 md:w-3.5 md:h-3.5 ${selected === doctor.id ? 'text-white' : 'text-[#8B5C9E]'}`} />
                     </div>
                     <div>
-                      <p className={`text-sm font-semibold ${selected === doctor.id ? 'text-white' : 'text-gray-900'}`}>
+                      <p className={`text-xs md:text-sm font-semibold ${selected === doctor.id ? 'text-white' : 'text-gray-900'}`}>
                         Available
                       </p>
-                      <p className={`text-[10px] md:text-xs font-medium ${selected === doctor.id ? 'text-white/90' : 'text-gray-700'}`}>
+                      <p className={`text-[10px] font-medium ${selected === doctor.id ? 'text-white/90' : 'text-gray-700'}`}>
                         Today
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <div className={`
-                      p-1.5 md:p-2 rounded-lg
+                      p-1 md:p-1.5 rounded-lg
                       ${selected === doctor.id ? 'bg-white/20' : 'bg-[#8B5C9E]/10'}
                     `}>
-                      <MapPin className={`w-3.5 h-3.5 md:w-4 md:h-4 ${selected === doctor.id ? 'text-white' : 'text-[#8B5C9E]'}`} />
+                      <MapPin className={`w-3 h-3 md:w-3.5 md:h-3.5 ${selected === doctor.id ? 'text-white' : 'text-[#8B5C9E]'}`} />
                     </div>
                     <div>
-                      <p className={`text-sm font-semibold ${selected === doctor.id ? 'text-white' : 'text-gray-900'}`}>
+                      <p className={`text-xs md:text-sm font-semibold ${selected === doctor.id ? 'text-white' : 'text-gray-900'}`}>
                         HSR Layout
                       </p>
-                      <p className={`text-[10px] md:text-xs font-medium ${selected === doctor.id ? 'text-white/90' : 'text-gray-700'}`}>
+                      <p className={`text-[10px] font-medium ${selected === doctor.id ? 'text-white/90' : 'text-gray-700'}`}>
                         Location
                       </p>
                     </div>

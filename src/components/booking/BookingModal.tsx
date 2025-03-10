@@ -15,11 +15,11 @@ interface BookingModalProps {
 }
 
 const steps = [
-  { id: 'doctor', title: 'Choose Doctor' },
-  { id: 'datetime', title: 'Select Time' },
-  { id: 'details', title: 'Your Details' },
-  { id: 'confirm', title: 'Confirm' },
-  { id: 'success', title: 'Success' }
+  { id: 'doctor', title: 'Doctor' },
+  { id: 'datetime', title: 'Time' },
+  { id: 'details', title: 'Details' },
+  { id: 'confirm', title: 'Review' },
+  { id: 'success', title: 'Done' }
 ];
 
 interface BookingData {
@@ -132,7 +132,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
           onClick={(e) => e.target === e.currentTarget && onClose()}
         >
           <motion.div
@@ -140,9 +140,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
             animate={isMobile ? { y: 0 } : { scale: 1, opacity: 1 }}
             exit={isMobile ? { y: '100%' } : { scale: 0.95, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-2xl bg-white overflow-hidden
-                     md:rounded-2xl md:shadow-xl
-                     h-[100dvh] md:h-auto md:max-h-[90vh]"
+            className="relative w-full h-[100dvh] md:h-auto md:max-h-[90vh] md:w-[90vw] md:max-w-2xl 
+                     bg-white overflow-hidden md:rounded-2xl md:shadow-xl
+                     flex flex-col"
           >
             {/* Close Button */}
             <div className="absolute top-0 right-0 pt-4 pr-4 z-10">
@@ -158,8 +158,39 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
               </button>
             </div>
 
+            {/* Progress Bar and Steps */}
+            <div className="relative z-10 px-4 pt-4 pb-2 md:px-6 md:pt-6 md:pb-4 bg-white border-b border-gray-100">
+              <div className="flex items-center justify-between mb-2 overflow-x-auto hide-scrollbar">
+                {steps.map((step, index) => (
+                  <div
+                    key={step.id}
+                    className={`
+                      text-xs md:text-sm font-medium whitespace-nowrap px-2 flex-shrink-0
+                      transition-colors
+                      ${index === currentStep 
+                        ? 'text-[#8B5C9E]' 
+                        : index < currentStep 
+                          ? 'text-[#8B5C9E]/60'
+                          : 'text-gray-400'
+                      }
+                    `}
+                  >
+                    {step.title}
+                  </div>
+                ))}
+              </div>
+              <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full bg-gradient-to-r from-[#8B5C9E] to-[#6B4A7E]"
+                />
+              </div>
+            </div>
+
             {/* Content */}
-            <div className="px-4 md:px-8 pt-8 h-full md:h-auto overflow-y-auto">
+            <div className="flex-1 overflow-y-auto overscroll-contain px-4 md:px-8 py-6">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentStep}
@@ -167,7 +198,6 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="min-h-[60vh] md:min-h-0"
                 >
                   {currentStep === 0 && (
                     <DoctorSelection
@@ -229,39 +259,6 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                   )}
                 </motion.div>
               </AnimatePresence>
-            </div>
-
-            {/* Progress Bar and Steps */}
-            <div className="sticky bottom-0 left-0 right-0 mt-6 border-t border-gray-100 bg-white">
-              <div className="px-4 md:px-6 py-4">
-                <div className="flex items-center justify-between mb-2 overflow-x-auto scrollbar-hide">
-                  {steps.map((step, index) => (
-                    <div
-                      key={step.id}
-                      className={`
-                        text-xs md:text-sm font-medium whitespace-nowrap px-2
-                        transition-colors
-                        ${index === currentStep 
-                          ? 'text-[#8B5C9E]' 
-                          : index < currentStep 
-                            ? 'text-[#8B5C9E]/60'
-                            : 'text-gray-400'
-                        }
-                      `}
-                    >
-                      {step.title}
-                    </div>
-                  ))}
-                </div>
-                <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.3 }}
-                    className="h-full bg-gradient-to-r from-[#8B5C9E] to-[#6B4A7E]"
-                  />
-                </div>
-              </div>
             </div>
           </motion.div>
         </motion.div>
