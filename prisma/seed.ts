@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
@@ -8,23 +8,28 @@ async function main() {
   await prisma.doctor.deleteMany();
 
   // Create doctors
-  const drSameer = await prisma.doctor.create({
-    data: {
+  const doctors = [
+    {
+      id: 'dr-sameer',
       name: 'Dr. Sameer',
       fee: 700,
       speciality: 'Orthopedic Surgeon',
     },
-  });
-
-  const otherDoctors = await prisma.doctor.create({
-    data: {
+    {
+      id: 'other-doctors',
       name: 'Other Doctors',
       fee: 1000,
       speciality: 'Sports Orthopedic Doctors',
-    },
-  });
+    }
+  ] as const;
 
-  console.log({ drSameer, otherDoctors });
+  for (const doctor of doctors) {
+    await prisma.doctor.create({
+      data: doctor
+    });
+  }
+
+  console.log('Database seeded successfully');
 }
 
 main()
