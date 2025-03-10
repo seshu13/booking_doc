@@ -67,18 +67,45 @@
   `;
   document.head.appendChild(style);
 
-  // Create iframe
-  const iframe = document.createElement('iframe');
-  iframe.className = 'trebound-widget-frame';
-  iframe.src = `${config.domain}/widget`;
-  document.body.appendChild(iframe);
+  let iframe = null;
 
-  // Handle messages from iframe
-  window.addEventListener('message', function(event) {
-    if (event.data.type === 'treboundClose') {
+  // Create iframe when needed
+  function createIframe() {
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.className = 'trebound-widget-frame';
+      iframe.src = `${config.domain}/widget?embedded=true`; // Add embedded parameter
+      document.body.appendChild(iframe);
+
+      // Close widget when clicking outside
+      iframe.addEventListener('click', function(e) {
+        if (e.target === iframe) {
+          hideWidget();
+        }
+      });
+
+      // Handle messages from iframe
+      window.addEventListener('message', function(event) {
+        if (event.data.type === 'treboundClose') {
+          hideWidget();
+        }
+      });
+    }
+    return iframe;
+  }
+
+  // Show widget
+  function showWidget() {
+    const iframe = createIframe();
+    iframe.classList.add('active');
+  }
+
+  // Hide widget
+  function hideWidget() {
+    if (iframe) {
       iframe.classList.remove('active');
     }
-  });
+  }
 
   // Create button
   function createButton(options = {}) {
@@ -90,7 +117,7 @@
     button.style.setProperty('--primary-color-dark', adjustColor(mergedConfig.primaryColor, -20));
     
     button.addEventListener('click', function() {
-      iframe.classList.add('active');
+      showWidget();
     });
 
     return button;
@@ -102,13 +129,6 @@
       ('0' + Math.min(255, Math.max(0, parseInt(x, 16) + amount)).toString(16)).slice(-2)
     ).replace(/^/, '#');
   }
-
-  // Close widget when clicking outside
-  iframe.addEventListener('click', function(e) {
-    if (e.target === iframe) {
-      iframe.classList.remove('active');
-    }
-  });
 
   // Expose to global scope
   window.TreboundWidget = {
