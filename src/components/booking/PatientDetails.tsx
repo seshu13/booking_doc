@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
+import { ChevronLeft } from 'lucide-react';
 
 const patientSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -37,14 +38,27 @@ const PatientDetails = ({ data, onSubmit, onBack }: PatientDetailsProps) => {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-semibold text-gray-900">Patient Details</h2>
-        <p className="text-base font-medium text-gray-600">Please provide your contact information</p>
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex items-center justify-between mb-2 md:mb-4">
+        <button
+          onClick={onBack}
+          className="text-sm text-[#8B5C9E] hover:text-[#6B4A7E] font-medium flex items-center gap-1
+                   active:scale-95 transition-transform touch-manipulation"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Back
+        </button>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-5">
+      <div className="space-y-1 md:space-y-2 md:text-center">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-900">Patient Details</h2>
+        <p className="text-sm md:text-base font-medium text-gray-600">
+          Please provide your contact information
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
+        <div className="space-y-4 md:space-y-5">
           {/* Name Field */}
           <div className="space-y-1.5">
             <label htmlFor="name" className="block text-sm font-semibold text-gray-900">
@@ -53,16 +67,19 @@ const PatientDetails = ({ data, onSubmit, onBack }: PatientDetailsProps) => {
             <input
               type="text"
               id="name"
+              autoComplete="name"
               {...register('name')}
               className={`
-                w-full px-4 py-3 rounded-lg border bg-white text-gray-900 placeholder:text-gray-500
+                w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg border bg-white text-gray-900 
+                placeholder:text-gray-500 text-base md:text-base
                 focus:outline-none focus:ring-2 focus:ring-[#8B5C9E] focus:border-transparent
-                ${errors.name ? 'border-red-300 ring-red-50' : 'border-gray-200 hover:border-gray-300'}
+                ${errors.name ? 'border-red-300 ring-red-50' : 'border-gray-200'}
+                touch-manipulation
               `}
               placeholder="Enter your full name"
             />
             {errors.name && (
-              <p className="text-sm font-medium text-red-600">{errors.name.message}</p>
+              <p className="text-sm font-medium text-red-600 mt-1">{errors.name.message}</p>
             )}
           </div>
 
@@ -74,16 +91,20 @@ const PatientDetails = ({ data, onSubmit, onBack }: PatientDetailsProps) => {
             <input
               type="tel"
               id="phone"
+              autoComplete="tel"
+              inputMode="numeric"
               {...register('phone')}
               className={`
-                w-full px-4 py-3 rounded-lg border bg-white text-gray-900 placeholder:text-gray-500
+                w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg border bg-white text-gray-900 
+                placeholder:text-gray-500 text-base md:text-base
                 focus:outline-none focus:ring-2 focus:ring-[#8B5C9E] focus:border-transparent
-                ${errors.phone ? 'border-red-300 ring-red-50' : 'border-gray-200 hover:border-gray-300'}
+                ${errors.phone ? 'border-red-300 ring-red-50' : 'border-gray-200'}
+                touch-manipulation
               `}
               placeholder="Enter your phone number"
             />
             {errors.phone && (
-              <p className="text-sm font-medium text-red-600">{errors.phone.message}</p>
+              <p className="text-sm font-medium text-red-600 mt-1">{errors.phone.message}</p>
             )}
           </div>
 
@@ -95,43 +116,39 @@ const PatientDetails = ({ data, onSubmit, onBack }: PatientDetailsProps) => {
             <input
               type="email"
               id="email"
+              autoComplete="email"
+              inputMode="email"
               {...register('email')}
               className={`
-                w-full px-4 py-3 rounded-lg border bg-white text-gray-900 placeholder:text-gray-500
+                w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg border bg-white text-gray-900 
+                placeholder:text-gray-500 text-base md:text-base
                 focus:outline-none focus:ring-2 focus:ring-[#8B5C9E] focus:border-transparent
-                ${errors.email ? 'border-red-300 ring-red-50' : 'border-gray-200 hover:border-gray-300'}
+                ${errors.email ? 'border-red-300 ring-red-50' : 'border-gray-200'}
+                touch-manipulation
               `}
               placeholder="Enter your email address"
             />
             {errors.email && (
-              <p className="text-sm font-medium text-red-600">{errors.email.message}</p>
+              <p className="text-sm font-medium text-red-600 mt-1">{errors.email.message}</p>
             )}
           </div>
         </div>
 
         {/* Navigation */}
-        <div className="flex justify-between items-center pt-6">
-          <button
-            type="button"
-            onClick={onBack}
-            className="px-6 py-2.5 text-gray-700 font-medium hover:text-gray-900 transition-colors"
-          >
-            Back
-          </button>
-          <motion.button
-            type="submit"
-            disabled={isSubmitting}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`
-              px-6 py-2.5 rounded-lg bg-[#8B5C9E] text-white font-medium
-              hover:bg-[#7B4C8E] transition-colors
-              disabled:opacity-50 disabled:cursor-not-allowed
-            `}
-          >
-            {isSubmitting ? 'Submitting...' : 'Continue'}
-          </motion.button>
-        </div>
+        <motion.button
+          type="submit"
+          disabled={isSubmitting}
+          whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className={`
+            w-full px-6 py-3 rounded-lg bg-[#8B5C9E] text-white font-medium text-base
+            hover:bg-[#7B4C8E] transition-colors
+            disabled:opacity-50 disabled:cursor-not-allowed
+            touch-manipulation
+          `}
+        >
+          {isSubmitting ? 'Submitting...' : 'Continue'}
+        </motion.button>
       </form>
     </div>
   );

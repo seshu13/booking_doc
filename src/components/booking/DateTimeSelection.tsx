@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { format, addDays, isSameDay, isAfter, startOfToday, isWeekend } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -32,7 +32,17 @@ const timeSlots = [
 const DateTimeSelection = ({ selected, onSelect, onBack }: DateTimeSelectionProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(selected.date);
   const [selectedTime, setSelectedTime] = useState<string>(selected.time);
+  const [isMobile, setIsMobile] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const today = startOfToday();
   const dates = Array.from({ length: 14 }, (_, i) => addDays(today, i));
@@ -41,6 +51,12 @@ const DateTimeSelection = ({ selected, onSelect, onBack }: DateTimeSelectionProp
     setSelectedDate(date);
     if (selectedTime) {
       onSelect({ date, time: selectedTime });
+    }
+    // Scroll to time selection on mobile
+    if (isMobile) {
+      setTimeout(() => {
+        document.getElementById('time-selection')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
   };
 
@@ -63,11 +79,12 @@ const DateTimeSelection = ({ selected, onSelect, onBack }: DateTimeSelectionProp
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="text-sm text-[#8B5C9E] hover:text-[#6B4A7E] font-medium flex items-center gap-1"
+          className="text-sm text-[#8B5C9E] hover:text-[#6B4A7E] font-medium flex items-center gap-1
+                   active:scale-95 transition-transform"
         >
           <ChevronLeft className="w-4 h-4" />
           Back
@@ -75,37 +92,39 @@ const DateTimeSelection = ({ selected, onSelect, onBack }: DateTimeSelectionProp
       </div>
 
       <div>
-        <h1 className="text-2xl font-semibold text-[#1a1a1a] mb-1">
+        <h1 className="text-xl md:text-2xl font-semibold text-[#1a1a1a] mb-1">
           Select Date & Time
         </h1>
-        <p className="text-[#4a4a4a] font-medium">
+        <p className="text-sm md:text-base text-[#4a4a4a] font-medium">
           Choose your preferred appointment slot
         </p>
       </div>
 
       {/* Date Selection */}
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-medium text-[#1a1a1a]">Select Date</h2>
-          <div className="flex gap-2">
+          <h2 className="text-base md:text-lg font-medium text-[#1a1a1a]">Select Date</h2>
+          <div className="flex gap-1 md:gap-2">
             <button
               onClick={() => scroll('left')}
-              className="p-1.5 rounded-full hover:bg-[#8B5C9E]/5 text-[#8B5C9E] transition-colors"
+              className="p-1.5 rounded-full hover:bg-[#8B5C9E]/5 text-[#8B5C9E] transition-colors
+                       active:scale-95 transition-transform touch-manipulation"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
             </button>
             <button
               onClick={() => scroll('right')}
-              className="p-1.5 rounded-full hover:bg-[#8B5C9E]/5 text-[#8B5C9E] transition-colors"
+              className="p-1.5 rounded-full hover:bg-[#8B5C9E]/5 text-[#8B5C9E] transition-colors
+                       active:scale-95 transition-transform touch-manipulation"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </div>
         </div>
 
         <div 
           ref={scrollRef}
-          className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar"
+          className="flex gap-2 md:gap-3 overflow-x-auto pb-2 hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
         >
           {dates.map((date) => {
             const isSelectable = isDateSelectable(date);
@@ -118,7 +137,8 @@ const DateTimeSelection = ({ selected, onSelect, onBack }: DateTimeSelectionProp
                 onClick={() => isSelectable && handleDateSelect(date)}
                 disabled={!isSelectable}
                 className={`
-                  flex-none w-20 py-3 rounded-xl text-center transition-all
+                  flex-none w-16 md:w-20 py-2.5 md:py-3 rounded-xl text-center transition-all
+                  active:scale-95 touch-manipulation
                   ${isSelected
                     ? 'bg-gradient-to-br from-[#8B5C9E] to-[#6B4A7E] text-white shadow-md'
                     : isSelectable
@@ -129,13 +149,13 @@ const DateTimeSelection = ({ selected, onSelect, onBack }: DateTimeSelectionProp
                   }
                 `}
               >
-                <p className="text-sm font-medium mb-1">
+                <p className="text-xs md:text-sm font-medium mb-1">
                   {format(date, 'EEE')}
                 </p>
-                <p className="text-2xl font-bold leading-none mb-1">
+                <p className="text-xl md:text-2xl font-bold leading-none mb-1">
                   {format(date, 'd')}
                 </p>
-                <p className="text-sm font-medium">
+                <p className="text-xs md:text-sm font-medium">
                   {format(date, 'MMM')}
                 </p>
               </button>
@@ -147,18 +167,20 @@ const DateTimeSelection = ({ selected, onSelect, onBack }: DateTimeSelectionProp
       {/* Time Selection */}
       {selectedDate && (
         <motion.div
+          id="time-selection"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-4"
+          className="space-y-3 md:space-y-4 scroll-mt-4"
         >
-          <h2 className="text-lg font-medium text-[#1a1a1a]">Select Time</h2>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+          <h2 className="text-base md:text-lg font-medium text-[#1a1a1a]">Select Time</h2>
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
             {timeSlots.map(({ time, label }) => (
               <button
                 key={time}
                 onClick={() => handleTimeSelect(time)}
                 className={`
-                  py-3 rounded-xl text-center transition-all text-sm font-medium
+                  py-2.5 md:py-3 rounded-xl text-center transition-all text-xs md:text-sm font-medium
+                  active:scale-95 touch-manipulation
                   ${selectedTime === time
                     ? 'bg-gradient-to-br from-[#8B5C9E] to-[#6B4A7E] text-white shadow-md'
                     : 'bg-white hover:bg-[#8B5C9E]/5 text-[#1a1a1a] border border-gray-200'
